@@ -37,14 +37,6 @@ function Navbar() {
           <i className="bi bi-moon-stars-fill swap-off fill-current text-xl"></i>
           <i className="bi bi-sun-fill swap-on fill-current text-xl"></i>
         </label>
-        <button className="btn btn-ghost btn-circle text-xl">
-          <i className="bi bi-search"></i>
-        </button>
-        <button className="btn btn-ghost btn-circle">
-          <div className="indicator bi bi-bell-fill text-xl">
-            <span className="badge badge-xs badge-primary indicator-item"></span>
-          </div>
-        </button>
       </div>
     </div>
   )
