@@ -1,3 +1,5 @@
+import { NavLink } from "react-router-dom"
+
 function Navbar() {
   return (
     <div className="navbar bg-base-300 rounded-box">
@@ -12,24 +14,24 @@ function Navbar() {
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-300 rounded-box w-52"
+            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
           >
             <li>
-              <a>Homepage</a>
+              <NavLink to="/">🏠 Home</NavLink>
             </li>
             <li>
-              <a>Portfolio</a>
+              <NavLink to="/sessions">🎮 Book an escape game</NavLink>
             </li>
             <li>
-              <a>About</a>
+              <NavLink to="/contact">🤙 Contact us</NavLink>
             </li>
           </ul>
         </div>
       </div>
       <div className="navbar-center">
-        <a className="btn btn-ghost text-xl" href="/">
+        <NavLink to="/" className="btn btn-ghost text-xl">
           Spooky Games
-        </a>
+        </NavLink>
       </div>
       <div className="navbar-end">
         <label className="swap swap-rotate btn btn-ghost btn-circle">

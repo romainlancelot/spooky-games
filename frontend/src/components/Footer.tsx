@@ -1,4 +1,4 @@
-import Boo from "./assets/boo.png"
+import Boo from "../assets/boo.png"
 
 function Footer() {
   return (
@@ -12,6 +12,7 @@ function Footer() {
         <p>Copyright © 2024 - All right reserved</p>
       </aside>
       <nav>
+        <h2 className="uppercase font-bold">Socials</h2>
         <div className="grid grid-flow-col gap-4">
           <a href="https://x.com" target="blank">
             <i className="bi bi-twitter-x text-2xl"></i>
