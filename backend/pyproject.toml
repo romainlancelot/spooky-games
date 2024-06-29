@@ -27,6 +27,7 @@ dependencies = [
     "django-filter",
     "markdown",
     "uvicorn",
+    "Pillow"
 ]
 
 [project.optional-dependencies]

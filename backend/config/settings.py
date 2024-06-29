@@ -42,6 +42,7 @@ INSTALLED_APPS: Final[list[str]] = [
     "django.contrib.staticfiles",
     "django_filters",
     "rest_framework",
+    "apps.core",
 ]
 
 MIDDLEWARE: Final[list[str]] = [
