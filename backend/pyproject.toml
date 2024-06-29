@@ -1,0 +1,62 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["apps/", "config/"]
+
+[project]
+name = "spoopy-api"
+version = "0.0.1"
+description = "API for Spooky Games"
+readme = "README.md"
+license = "MIT"
+keywords = ["api", "django", "rest", "games"]
+classifiers = [
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.9",
+    "Operating System :: OS Independent",
+    "Topic :: Communications :: Chat",
+    "Topic :: Internet",
+    "Topic :: Utilities",
+]
+dependencies = [
+    "django",
+    "djangorestframework",
+    "django-filter",
+    "markdown",
+    "uvicorn",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "django-stubs[compatible-mypy]",
+    "freezegun",
+    "mypy",
+    "pytest",
+    "pytest-asyncio",
+    "pytest-cov",
+    "pytest-django",
+    "pytest-env",
+    "pytest-mock",
+    "python-dotenv",
+]
+
+[tool.mypy]
+plugins = ["mypy_django_plugin.main"]
+
+[tool.django-stubs]
+django_settings_module = "config.settings"
+
+[tool.pytest.ini_options]
+addopts = "-vv --tb=short --cov=apps --cov-report=term-missing"
+DJANGO_SETTINGS_MODULE = "config.tests_settings"
+filterwarnings = "ignore::DeprecationWarning"
+python_files = "tests_*.py"
+env = [
+]
+
+[tool.coverage.run]
+omit = ["**/tests/*", "**/__init__.py", "**/migrations/*"]
