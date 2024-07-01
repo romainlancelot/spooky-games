@@ -1,47 +1,43 @@
-import SessionCard, { SessionsProps } from "../components/SessionCard"
-import LostAsylum from "../assets/lost_asylum.jpg"
-import PassePartout from "../assets/passe_partout.jpg"
-import HorrificRedPiece from "../assets/horrific_red_piece.png"
+import { toast } from "react-toastify"
 import Pricing from "../components/Pricing"
-
-const sessions: SessionsProps[] = [
-  {
-    id: 1,
-    image: LostAsylum,
-    title: "Lost Asylum",
-    description:
-      "The Lost Asylum is a horror-themed escape room. Be prepared to be scared! This is not for the faint of heart.",
-  },
-  {
-    id: 2,
-    image: PassePartout,
-    title: "Passe partout",
-    description:
-      "The Passe Partout is a puzzle-themed escape room. Can you solve the puzzles and escape? This is a great room for families and beginners.",
-  },
-  {
-    id: 3,
-    image: HorrificRedPiece,
-    title: "Horrific Red Piece",
-    description:
-      "The Horrific Red Piece is a horror-themed escape room. Be prepared to be scared! This is not for the faint of heart.",
-  },
-]
+import SessionCard from "../components/SessionCard"
+import { useEffect, useState } from "react"
+import { SessionsProps } from "../models/sessions"
+import { getSessions } from "../features/sessions/api"
+import Spinner from "../components/Spinner"
 
 function Sessions() {
+  const [sessions, setSessions] = useState<SessionsProps[]>([])
+
+  useEffect(() => {
+    try {
+      getSessions()
+        .then((data) => setSessions(data))
+        .catch(() => setSessions([]))
+    } catch (error) {
+      toast.error("Failed to fetch sessions")
+    }
+  }, [])
+
   return (
     <div className="my-8">
-      <div className="flex justify-center mt-4">
+      <div className="flex justify-center mt-4 mb-12">
         <Pricing />
       </div>
-      <p className="text-center mt-2 mb-12 text-sm">
-        These are the pricing options for our escape rooms that we offer.
-      </p>
-      <div className="grid grid-cols-1 sm:grid-cols-3 justify-items-center gap-10 mb-12">
-        {sessions.map((session, index) => (
-          <SessionCard key={index} {...session} />
-        ))}
-      </div>
+      {sessions && sessions.length > 0 ? (
+        <>
+          <p className="text-center mb-12 text-sm">
+            These are the pricing options for our escape rooms that we offer.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 justify-items-center gap-10 mb-12">
+            {sessions.map((session) => (
+              <SessionCard key={session.id} {...session} />
+            ))}
+          </div>
+        </>
+      ) : (
+        <Spinner />
+      )}
     </div>
   )
 }

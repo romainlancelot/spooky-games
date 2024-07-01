@@ -42,7 +42,10 @@ INSTALLED_APPS: Final[list[str]] = [
     "django.contrib.staticfiles",
     "django_filters",
     "rest_framework",
+    "rest_framework.authtoken",
+    "apps.api",
     "apps.core",
+    "apps.reservations",
 ]
 
 MIDDLEWARE: Final[list[str]] = [
@@ -133,5 +136,8 @@ REST_FRAMEWORK: Final[dict[str, Any]] = {
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "apps.core.models.BearerToken",
+    ],
     "PAGE_SIZE": 10,
 }
