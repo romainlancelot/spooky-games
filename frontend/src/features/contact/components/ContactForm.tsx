@@ -1,4 +1,4 @@
-import { Alert, AlertProps } from "./Alerts"
+import { Alert, AlertProps } from "../../../components/Alerts"
 import { renderToString } from "react-dom/server"
 
 function ContactForm() {

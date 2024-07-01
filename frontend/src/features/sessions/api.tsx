@@ -1,5 +1,5 @@
-import { ApiResponse } from "../../models/response"
-import { SessionsProps } from "../../models/sessions"
+import { ApiResponse } from "../api_response/model"
+import { SessionsProps } from "./model"
 
 export async function getSessions(): Promise<SessionsProps[]> {
   try {

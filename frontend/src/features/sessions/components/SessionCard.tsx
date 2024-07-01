@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom"
-import { SessionsProps } from "../models/sessions"
+import { SessionsProps } from "../model"
 
 function SessionCard({
   id,
