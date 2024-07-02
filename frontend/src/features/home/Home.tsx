@@ -1,5 +1,5 @@
-import Card, { CardProps } from "../../components/Card"
-import Accordion, { AccordionProps } from "../../components/Accordion"
+import Card, { CardProps } from "../global/components/Card"
+import Accordion, { AccordionProps } from "../global/components/Accordion"
 import Environment from "../../assets/environment.png"
 import Timer from "../../assets/timer.png"
 import Difficulty from "../../assets/difficulty.png"

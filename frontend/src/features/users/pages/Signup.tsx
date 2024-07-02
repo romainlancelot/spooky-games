@@ -1,9 +1,9 @@
-import { NavLink, NavigateFunction, useNavigate } from "react-router-dom"
+import { NavLink } from "react-router-dom"
 import { toast } from "react-toastify"
+import { registerUser } from "../api"
+import { User } from "../models"
 
 function Signup() {
-  const navigate: NavigateFunction = useNavigate()
-
   const confirmPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const password = document.querySelector(
       'input[name="password"]'
@@ -18,31 +18,18 @@ function Signup() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const formData = Object.fromEntries(new FormData(e.currentTarget).entries())
+    const formData = Object.fromEntries(new FormData(e.currentTarget))
     try {
-      const resonse = await fetch("/api/v1/users/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      })
-      const data = await resonse.json()
-      if (resonse.ok) {
-        navigate("/login")
-      } else {
-        toast.error("Please check the form for errors.")
-        Object.keys(data).forEach((key) => {
-          toast.error(`${key}: ${data[key]}`)
-        })
-      }
+      await registerUser(formData as unknown as User)
+      toast.success("Account created successfully. Please login.")
     } catch (error) {
+      console.error(error)
       toast.error("Something went wrong. Please try again.")
     }
   }
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center my-8">
       <form onSubmit={handleSubmit} className="card p-5 w-1/2 bg-base-300">
         <h2 className="text-center font-bold text-2xl mb-4">
           🤘 Create an account

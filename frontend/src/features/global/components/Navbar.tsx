@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom"
+import { User } from "../../users/models"
 
-function Navbar() {
+function Navbar({ user, logout }: { user: User | null; logout: () => void }) {
   return (
     <div className="navbar bg-base-300 rounded-box">
       <div className="navbar-start">
@@ -34,6 +35,39 @@ function Navbar() {
         </NavLink>
       </div>
       <div className="navbar-end">
+        <div className="dropdown dropdown-end">
+          <div
+            tabIndex={0}
+            role="button"
+            className="btn btn-ghost btn-circle text-2xl"
+          >
+            <i className="bi bi-person"></i>
+          </div>
+          <ul className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+            {!user ? (
+              <>
+                <li>
+                  <NavLink to="/login">🔑 Login</NavLink>
+                </li>
+                <li>
+                  <NavLink to="/signup">🤘 Signup</NavLink>
+                </li>
+              </>
+            ) : (
+              <>
+                <li>
+                  <NavLink to="/profile">👤 Profile</NavLink>
+                </li>
+                <li>
+                  <button onClick={logout} type="button">
+                    🚪 Logout
+                  </button>
+                </li>
+              </>
+            )}
+          </ul>
+        </div>
+
         <label className="swap swap-rotate btn btn-ghost btn-circle">
           <input type="checkbox" className="theme-controller" value="light" />
           <i className="bi bi-moon-stars-fill swap-off fill-current text-xl"></i>

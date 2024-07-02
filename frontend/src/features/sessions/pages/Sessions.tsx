@@ -1,10 +1,10 @@
 import { toast } from "react-toastify"
-import Pricing from "../../../components/Pricing"
+import Pricing from "../../global/components/Pricing"
 import SessionCard from "../components/SessionCard"
 import { useEffect, useState } from "react"
 import { SessionsProps } from "../model"
 import { getSessions } from "../api"
-import Spinner from "../../../components/Spinner"
+import Spinner from "../../global/components/Spinner"
 
 function Sessions() {
   const [sessions, setSessions] = useState<SessionsProps[]>([])

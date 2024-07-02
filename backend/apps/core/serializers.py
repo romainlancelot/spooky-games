@@ -22,4 +22,22 @@ class UserSerializer(serializers.ModelSerializer):
             "is_active",
             "date_joined",
         ]
-        read_only_fields: list[str] = ["id", "is_staff", "is_active", "date_joined"]
+        read_only_fields: list[str] = [
+            "id",
+            "is_staff",
+            "is_active",
+            "date_joined",
+        ]
+
+    def create(self, validated_data: dict) -> User:
+        user: User = User.objects.create_user(**validated_data)
+        return user
+
+    def update(self, instance: User, validated_data: dict) -> User:
+        for attr, value in validated_data.items():
+            if attr == "password":
+                instance.set_password(value)
+                continue
+            setattr(instance, attr, value)
+        instance.save()
+        return instance

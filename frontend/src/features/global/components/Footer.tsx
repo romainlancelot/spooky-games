@@ -1,4 +1,4 @@
-import Boo from "../assets/boo.png"
+import Boo from "../../../assets/boo.png"
 
 function Footer() {
   return (

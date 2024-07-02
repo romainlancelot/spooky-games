@@ -1,7 +1,7 @@
 import { useState } from "react"
-import { Alert, AlertProps } from "../../../components/Alerts"
+import { Alert, AlertProps } from "../../global/components/Alerts"
 import { renderToString } from "react-dom/server"
-import { pricings } from "../../../components/Pricing"
+import { pricings } from "../../global/components/Pricing"
 
 function BookSessionsForm({ id }: { id: string | undefined }) {
   const [rangeValue, setRangeValue] = useState(2)
