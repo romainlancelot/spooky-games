@@ -1,7 +1,6 @@
-import { Alert, AlertProps } from "../../global/components/Alerts"
-import { renderToString } from "react-dom/server"
+import { toast } from "react-toastify"
 
-function ContactForm() {
+export function ContactForm() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const alerts = document.getElementById("alerts")
@@ -12,18 +11,10 @@ function ContactForm() {
     const data = Object.fromEntries(formData)
     window.scrollTo(0, 0)
     if (!data.email || !data.phone || !data.content) {
-      const props: AlertProps = {
-        type: "error",
-        message: "Please fill in all fields",
-      }
-      alerts.innerHTML = renderToString(<Alert {...props} />)
+      toast.error("Please fill in all fields")
       return
     }
-    const props: AlertProps = {
-      type: "success",
-      message: "Your message has been sent",
-    }
-    alerts.innerHTML = renderToString(<Alert {...props} />)
+    toast.success("Your message has been sent")
     e.currentTarget.reset()
   }
 
@@ -67,5 +58,3 @@ function ContactForm() {
     </div>
   )
 }
-
-export default ContactForm

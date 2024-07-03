@@ -3,7 +3,7 @@ import { toast } from "react-toastify"
 import { getLogedUser, getToken } from "../api"
 import { User } from "../models"
 
-function Login({
+export function Login({
   onLogin,
 }: {
   onLogin: React.Dispatch<React.SetStateAction<User | null>>
@@ -39,7 +39,7 @@ function Login({
   }
 
   return (
-    <div className="flex justify-center my-8">
+    <div className="flex justify-center">
       <form onSubmit={handleSubmit} className="card w-1/2 bg-base-300 p-5">
         <h2 className="text-center font-bold text-2xl mb-4">
           🪵 Login to the website
@@ -78,5 +78,3 @@ function Login({
     </div>
   )
 }
-
-export default Login

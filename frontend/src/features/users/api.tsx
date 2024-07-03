@@ -88,9 +88,7 @@ export async function updateUser(data: User): Promise<User> {
   }
 }
 
-export async function getAllUsers(
-  url: string = "/api/users/"
-): Promise<ApiResponse> {
+export async function getAllUsers(url: string): Promise<ApiResponse> {
   try {
     const token = localStorage.getItem("token")
     const response = await fetch(url, {

@@ -8,6 +8,9 @@ class UserSerializer(serializers.ModelSerializer):
     email: serializers.EmailField = serializers.EmailField(required=True)
     first_name: serializers.CharField = serializers.CharField(required=True)
     last_name: serializers.CharField = serializers.CharField(required=True)
+    password: serializers.CharField = serializers.CharField(
+        required=True, write_only=True
+    )
 
     class Meta:
         model: type[User] = User
@@ -19,12 +22,14 @@ class UserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "is_staff",
+            "is_superuser",
             "is_active",
             "date_joined",
         ]
         read_only_fields: list[str] = [
             "id",
             "is_staff",
+            "is_superuser",
             "is_active",
             "date_joined",
         ]

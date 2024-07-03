@@ -3,7 +3,7 @@ import { toast } from "react-toastify"
 import { registerUser } from "../api"
 import { User } from "../models"
 
-function Signup() {
+export function Signup() {
   const confirmPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const password = document.querySelector(
       'input[name="password"]'
@@ -29,7 +29,7 @@ function Signup() {
   }
 
   return (
-    <div className="flex justify-center my-8">
+    <div className="flex justify-center">
       <form onSubmit={handleSubmit} className="card p-5 w-1/2 bg-base-300">
         <h2 className="text-center font-bold text-2xl mb-4">
           🤘 Create an account
@@ -89,5 +89,3 @@ function Signup() {
     </div>
   )
 }
-
-export default Signup

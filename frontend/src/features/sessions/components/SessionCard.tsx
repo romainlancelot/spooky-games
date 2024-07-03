@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom"
 import { SessionsProps } from "../model"
 
-function SessionCard({
+export function SessionCard({
   id,
   name,
   image,
@@ -32,5 +32,3 @@ function SessionCard({
     </div>
   )
 }
-
-export default SessionCard

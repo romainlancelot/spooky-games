@@ -1,6 +1,6 @@
 import Boo from "../../../assets/boo.png"
 
-function Footer() {
+export function Footer() {
   return (
     <footer className="footer footer-center p-10 bg-base-300 rounded-box">
       <aside>
@@ -28,5 +28,3 @@ function Footer() {
     </footer>
   )
 }
-
-export default Footer

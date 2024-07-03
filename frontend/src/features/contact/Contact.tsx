@@ -1,11 +1,9 @@
-import ContactForm from "./components/ContactForm"
+import { ContactForm } from "./components/ContactForm"
 
-function Contact() {
+export function Contact() {
   return (
     <div className="my-8">
       <ContactForm />
     </div>
   )
 }
-
-export default Contact

@@ -30,7 +30,15 @@ export const pricings: PricingProps[] = [
   },
 ]
 
-function Pricing() {
+export function calcPrice(people: number) {
+  const tmp: PricingProps[] = pricings.sort((a, b) => a.people - b.people)
+  return (
+    tmp.find((pricing) => pricing.people >= people)?.price ||
+    tmp[tmp.length - 1].price
+  )
+}
+
+export function Pricing() {
   return (
     <div className="stats bg-base-300">
       {pricings.map((pricing) => (
@@ -49,5 +57,3 @@ function Pricing() {
     </div>
   )
 }
-
-export default Pricing

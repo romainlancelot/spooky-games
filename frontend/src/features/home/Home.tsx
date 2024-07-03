@@ -1,12 +1,12 @@
-import Card, { CardProps } from "../global/components/Card"
-import Accordion, { AccordionProps } from "../global/components/Accordion"
+import { Card, CardProps } from "../global/components/Card"
+import { Accordion, AccordionProps } from "../global/components/Accordion"
 import Environment from "../../assets/environment.png"
 import Timer from "../../assets/timer.png"
 import Difficulty from "../../assets/difficulty.png"
 import TeamBuilding from "../../assets/team_building.png"
 import UniqueScenarios from "../../assets/unique_scenarios.png"
 import Homepage from "../../assets/homepage.png"
-import ContactForm from "../contact/components/ContactForm"
+import { ContactForm } from "../contact/components/ContactForm"
 
 const spookyAdvantages: CardProps[] = [
   {

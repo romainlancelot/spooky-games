@@ -1,12 +1,12 @@
 import { toast } from "react-toastify"
-import Pricing from "../../global/components/Pricing"
-import SessionCard from "../components/SessionCard"
+import { Pricing } from "../../global/components/Pricing"
+import { SessionCard } from "../components/SessionCard"
 import { useEffect, useState } from "react"
 import { SessionsProps } from "../model"
 import { getSessions } from "../api"
-import Spinner from "../../global/components/Spinner"
+import { Spinner } from "../../global/components/Spinner"
 
-function Sessions() {
+export function Sessions() {
   const [sessions, setSessions] = useState<SessionsProps[]>([])
 
   useEffect(() => {
@@ -41,5 +41,3 @@ function Sessions() {
     </div>
   )
 }
-
-export default Sessions

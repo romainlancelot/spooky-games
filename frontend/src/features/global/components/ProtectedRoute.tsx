@@ -1,9 +1,8 @@
 import { toast } from "react-toastify"
 import { Navigate, Outlet } from "react-router-dom"
-import { useEffect } from "react"
 import { User } from "../../users/models"
 
-function ProtectedRoute({
+export function ProtectedRoute({
   user,
   redirectPath = "/login",
   needAdmin = false,
@@ -12,17 +11,12 @@ function ProtectedRoute({
   redirectPath?: string
   needAdmin?: boolean
 }) {
-  useEffect(() => {
-    if (needAdmin && !user?.is_staff && !user?.is_superuser) {
-      toast.error("You don't have the permission to access this page")
-    } else if (!user || localStorage.getItem("token") === null) {
-      toast.info("You need to be logged in to access this page")
-    }
-  }, [user, needAdmin])
-  if (needAdmin && (!user?.is_staff || !user?.is_superuser))
+  if (!user || user === null) {
+    toast.error("You need to login to access this page")
+    return <Navigate to={redirectPath} replace />
+  } else if (needAdmin && !user.is_staff && !user.is_superuser) {
+    toast.error("You don't have permission to access this page")
     return <Navigate to="/" replace />
-  else if (!user) return <Navigate to={redirectPath} replace />
+  }
   return <Outlet />
 }
-
-export default ProtectedRoute

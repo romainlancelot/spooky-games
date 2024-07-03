@@ -3,7 +3,7 @@ export interface AccordionProps {
   content: string
 }
 
-function Accordion({ question, content }: AccordionProps) {
+export function Accordion({ question, content }: AccordionProps) {
   return (
     <div className="collapse collapse-plus bg-base-300 my-2">
       <input type="radio" name="faq-accordion" />
@@ -14,5 +14,3 @@ function Accordion({ question, content }: AccordionProps) {
     </div>
   )
 }
-
-export default Accordion

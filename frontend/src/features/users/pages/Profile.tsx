@@ -2,9 +2,9 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { User } from "../models"
 import { getLogedUser } from "../api"
-import ModifyForm from "../components/ModifyForm"
+import { ModifyForm } from "../components/ModifyForm"
 
-function Profile() {
+export function Profile() {
   const [user, setUser] = useState<User | null>(null)
   const navigate = useNavigate()
 
@@ -18,7 +18,7 @@ function Profile() {
   }, [navigate])
 
   return (
-    <div className="flex justify-center my-8">
+    <div className="flex justify-center">
       <div className="card w-2/3 bg-base-300 p-5">
         <h2 className="text-center font-bold text-2xl mb-4">👤 Profile</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2"></div>
@@ -42,5 +42,3 @@ function Profile() {
     </div>
   )
 }
-
-export default Profile

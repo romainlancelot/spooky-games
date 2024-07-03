@@ -1,7 +1,13 @@
 import { NavLink } from "react-router-dom"
 import { User } from "../../users/models"
 
-function Navbar({ user, logout }: { user: User | null; logout: () => void }) {
+export function Navbar({
+  user,
+  logout,
+}: {
+  user: User | null
+  logout: () => void
+}) {
   return (
     <div className="navbar bg-base-300 rounded-box">
       <div className="navbar-start">
@@ -65,6 +71,11 @@ function Navbar({ user, logout }: { user: User | null; logout: () => void }) {
                 </li>
               </>
             )}
+            {(user && user.is_staff) || user?.is_superuser ? (
+              <li>
+                <NavLink to="/admin/users">🔧 Users</NavLink>
+              </li>
+            ) : null}
           </ul>
         </div>
 
@@ -77,5 +88,3 @@ function Navbar({ user, logout }: { user: User | null; logout: () => void }) {
     </div>
   )
 }
-
-export default Navbar

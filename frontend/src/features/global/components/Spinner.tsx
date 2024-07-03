@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-function Spinner() {
+export function Spinner() {
   const waitingTime: number = 5
   const [showSpinner, setShowSpinner] = useState(true)
 
@@ -26,5 +26,3 @@ function Spinner() {
     </div>
   )
 }
-
-export default Spinner

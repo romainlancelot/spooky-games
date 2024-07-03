@@ -2,7 +2,7 @@ import { toast } from "react-toastify"
 import { User } from "../models"
 import { updateUser } from "../api"
 
-function ModifyForm({
+export function ModifyForm({
   user,
   setUser,
 }: {
@@ -113,5 +113,3 @@ function ModifyForm({
     </form>
   )
 }
-
-export default ModifyForm

@@ -4,7 +4,7 @@ export interface CardProps {
   description: string
 }
 
-function Card({ image, title, description }: CardProps) {
+export function Card({ image, title, description }: CardProps) {
   return (
     <div className="card image-full">
       <figure>
@@ -17,5 +17,3 @@ function Card({ image, title, description }: CardProps) {
     </div>
   )
 }
-
-export default Card

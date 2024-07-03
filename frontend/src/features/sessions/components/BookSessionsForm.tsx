@@ -1,43 +1,44 @@
-import { useState } from "react"
-import { Alert, AlertProps } from "../../global/components/Alerts"
-import { renderToString } from "react-dom/server"
-import { pricings } from "../../global/components/Pricing"
+import { useEffect, useState } from "react"
+import { calcPrice } from "../../global/components/Pricing"
+import { SessionsProps } from "../model"
+import { getLogedUser } from "../../users/api"
+import { User } from "../../users/models"
+import { toast } from "react-toastify"
 
-function BookSessionsForm({ id }: { id: string | undefined }) {
-  const [rangeValue, setRangeValue] = useState(2)
+export function BookSessionsForm({ session }: { session: SessionsProps }) {
+  const [rangeValue, setRangeValue] = useState(0)
+  const [user, setUser] = useState<User | null>(null)
+
+  useEffect(() => {
+    getLogedUser()
+      .then((data) => setUser(data))
+      .catch((error) => console.error(error))
+  }, [])
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const alerts = document.getElementById("alerts")
-    if (!alerts) {
-      return
-    }
     const formData = new FormData(e.currentTarget)
     const data = Object.fromEntries(formData)
     window.scrollTo(0, 0)
     if (!data.email || !data.phone || !data.content) {
-      const props: AlertProps = {
-        type: "error",
-        message: "Please fill in all fields",
-      }
-      alerts.innerHTML = renderToString(<Alert {...props} />)
+      toast.error("Please fill in all fields")
       return
     }
-    const props: AlertProps = {
-      type: "success",
-      message: "Your message has been sent",
-    }
-    alerts.innerHTML = renderToString(<Alert {...props} />)
+    toast.success("Your message has been sent")
     e.currentTarget.reset()
   }
 
   return (
     <div className="card bg-base-300 w-2/3 p-10">
-      <h2 className="text-4xl text-center mb-2">Book your {id} session now!</h2>
+      <h2 className="text-4xl text-center mb-2">
+        Book your {session.name} session now!
+      </h2>
       <p className="text-center text-sm mb-8 w-1/2 mx-auto">
         We need the buyer's information to book the session. Please fill the
         info.
       </p>
       <form action="" method="post" onSubmit={handleSubmit}>
+        <h3 className="text-xl mb-4">Buyer's information</h3>
         <label className="input input-bordered flex items-center gap-2 mb-4">
           <i className="bi bi-person-fill"></i>
           <input
@@ -45,6 +46,8 @@ function BookSessionsForm({ id }: { id: string | undefined }) {
             className="grow"
             name="firstname"
             placeholder="Firstname"
+            value={user?.first_name}
+            disabled
           />
         </label>
         <label className="input input-bordered flex items-center gap-2 mb-4">
@@ -54,6 +57,8 @@ function BookSessionsForm({ id }: { id: string | undefined }) {
             className="grow"
             name="lastname"
             placeholder="Lastname"
+            value={user?.last_name}
+            disabled
           />
         </label>
         <label className="input input-bordered flex items-center gap-2 mb-4">
@@ -63,18 +68,14 @@ function BookSessionsForm({ id }: { id: string | undefined }) {
             className="grow"
             name="email"
             placeholder="Email"
+            value={user?.email}
+            disabled
           />
         </label>
-        <label className="input input-bordered flex items-center gap-2 mb-4">
-          <i className="bi bi-telephone-fill"></i>
-          <input
-            type="text"
-            className="grow"
-            name="phone"
-            placeholder="Phone"
-          />
-        </label>
+
         <div className="divider my-10"></div>
+
+        <h3 className="text-xl mb-4">Session information</h3>
         <label className="input input-bordered flex items-center gap-2 mb-4">
           <i className="bi bi-calendar2-event"></i>
           <input type="date" className="grow" name="date" placeholder="Date" />
@@ -86,11 +87,12 @@ function BookSessionsForm({ id }: { id: string | undefined }) {
 
         <div className="divider my-10"></div>
 
+        <h3 className="text-xl mb-4">Other participants</h3>
         <p className="mb-2">How many participants?</p>
         <input
           type="range"
-          min={2}
-          max={4}
+          min={0}
+          max={5}
           value={rangeValue}
           className="range"
           step={1}
@@ -98,9 +100,9 @@ function BookSessionsForm({ id }: { id: string | undefined }) {
           name="participants_count"
         />
         <div className="w-full flex justify-between text-xs px-2 mb-8">
-          <span>2</span>
-          <span>3</span>
-          <span>4</span>
+          {[...Array(6)].map((_, index) => (
+            <span key={index}>{index}</span>
+          ))}
         </div>
         <table className="table w-full">
           <thead>
@@ -146,11 +148,13 @@ function BookSessionsForm({ id }: { id: string | undefined }) {
 
         <div className="divider my-10"></div>
 
+        <p className="mb-2">Price per participant: {calcPrice(rangeValue)}€</p>
         <p className="mb-2">
-          Price per participant: {pricings[rangeValue - 2].price}€
-        </p>
-        <p className="mb-2">
-          Total price: {pricings[rangeValue - 2].price * rangeValue}€
+          Total price:{" "}
+          {rangeValue > 0
+            ? calcPrice(rangeValue) * rangeValue
+            : calcPrice(rangeValue)}
+          €
         </p>
 
         <div className="text-center">
@@ -162,5 +166,3 @@ function BookSessionsForm({ id }: { id: string | undefined }) {
     </div>
   )
 }
-
-export default BookSessionsForm
