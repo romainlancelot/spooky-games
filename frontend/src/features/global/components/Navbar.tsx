@@ -72,9 +72,14 @@ export function Navbar({
               </>
             )}
             {(user && user.is_staff) || user?.is_superuser ? (
-              <li>
-                <NavLink to="/admin/users">🔧 Users</NavLink>
-              </li>
+              <div>
+                <li>
+                  <NavLink to="/admin/users">🔧 Users</NavLink>
+                </li>
+                <li>
+                  <NavLink to="/admin/sessions">🔧 Sessions</NavLink>
+                </li>
+              </div>
             ) : null}
           </ul>
         </div>

@@ -15,6 +15,8 @@ import { Signup } from "./features/users/pages/Signup.tsx"
 import { Profile } from "./features/users/pages/Profile.tsx"
 import { ProtectedRoute } from "./features/global/components/ProtectedRoute.tsx"
 import { UsersList } from "./features/users/pages/admin/UsersList.tsx"
+import { SessionsList } from "./features/sessions/pages/admin/SessionList.tsx"
+import { CreateSession } from "./features/sessions/pages/admin/CreateSession.tsx"
 
 function App() {
   const [user, setUser] = useState<User | null>(null)
@@ -34,7 +36,7 @@ function App() {
 
   return (
     <main className="flex flex-col min-h-screen justify-between">
-      <ToastContainer position="top-right" theme="light" />
+      <ToastContainer position="bottom-right" theme="light" />
       <Navbar user={user} logout={logout} />
       <div className="mb-auto mt-8">
         <Routes>
@@ -55,6 +57,8 @@ function App() {
             element={<ProtectedRoute user={user} redirectPath="/" needAdmin />}
           >
             <Route path="/admin/users" element={<UsersList />} />
+            <Route path="/admin/sessions" element={<SessionsList />} />
+            <Route path="/admin/sessions/create" element={<CreateSession />} />
           </Route>
 
           <Route

@@ -32,6 +32,7 @@ class ReservationSerializer(serializers.ModelSerializer):
     game: GameSerializer = GameSerializer(read_only=True)
     owner: UserSerializer = UserSerializer(read_only=True)
     participants: ParticipantSerializer = ParticipantSerializer(many=True)
+    num_players: serializers.SerializerMethodField = serializers.SerializerMethodField()
 
     class Meta:
         model: type[Reservation] = Reservation
@@ -40,23 +41,18 @@ class ReservationSerializer(serializers.ModelSerializer):
             "reservation_time",
             "date",
             "num_players",
+            "price",
             "game",
             "owner",
             "participants",
         ]
-        read_only_fields: list[str] = ["id", "game"]
+        read_only_fields: list[str] = ["id", "game", "num_players", "owner"]
 
     def validate(self, attrs: Any) -> Any:
-        print(attrs)
         date: str = attrs["date"]
         reservation_time: str = attrs["reservation_time"]
         if Reservation.objects.filter(date=date, reservation_time=reservation_time):
             raise serializers.ValidationError("Reservation already exists.")
-        print(attrs["num_players"], len(attrs["participants"]))
-        if attrs["num_players"] != len(attrs["participants"]) + 1:  # due to owner
-            raise serializers.ValidationError(
-                "Number of players must match the number of participants."
-            )
         return attrs
 
     def create(self, validated_data) -> Reservation:
@@ -65,3 +61,6 @@ class ReservationSerializer(serializers.ModelSerializer):
         for participant_data in participants_data:
             Participant.objects.create(reservation=reservation, **participant_data)
         return reservation
+
+    def get_num_players(self, obj: Reservation) -> int:
+        return obj.participants.count()

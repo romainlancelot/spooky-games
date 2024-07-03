@@ -1,6 +1,6 @@
 import { toast } from "react-toastify"
 import { User } from "../models"
-import { updateUser } from "../api"
+import { updateLoggedUser } from "../api"
 
 export function ModifyForm({
   user,
@@ -33,13 +33,14 @@ export function ModifyForm({
       delete formData.password
     }
     try {
-      await updateUser(formData as unknown as User)
+      await updateLoggedUser(formData as unknown as User)
       toast.success("Account updated successfully.")
     } catch (error) {
       console.error(error)
       toast.error("Something went wrong. Please try again.")
     }
   }
+
   return (
     <form onSubmit={handleSubmit}>
       <p className="text-center mb-8"></p>

@@ -1,8 +1,10 @@
-from rest_framework import generics
 from django.db.models.query import QuerySet
-from rest_framework import filters
+from rest_framework import generics, filters
 from rest_framework.permissions import BasePermission, IsAuthenticatedOrReadOnly
-from apps.reservations.models import Game, Reservation
+from rest_framework.views import APIView
+from rest_framework.request import Request
+from rest_framework.response import Response
+from apps.reservations.models import RESERVATION_TIME_CHOICES, Game, Reservation
 from apps.reservations.serializers import GameSerializer, ReservationSerializer
 
 __all__: list[str] = ["GameListView", "GameDetailView", "ReservationListCreateView"]
@@ -12,6 +14,8 @@ class GameListView(generics.ListCreateAPIView):
     queryset: QuerySet[Game] = Game.objects.all()
     serializer_class: type[GameSerializer] = GameSerializer
     permission_classes: list[BasePermission] = [IsAuthenticatedOrReadOnly]
+    filter_backends: list[filters.BaseFilterBackend] = [filters.SearchFilter]
+    search_fields: list[str] = ["name", "description"]
 
 
 class GameDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -31,3 +35,10 @@ class ReservationListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer: ReservationSerializer) -> None:
         return serializer.save(game=self.get_object(), owner=self.request.user)
+
+
+class OpeningHoursView(APIView):
+    def get(self, request: Request) -> Response:
+        return Response(
+            {"opening_hours": [key for key, value in RESERVATION_TIME_CHOICES]}
+        )

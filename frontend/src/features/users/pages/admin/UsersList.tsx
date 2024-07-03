@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
-// import UserForm from "./components/UserForm"
-import { getAllUsers } from "../../api"
+import { deleteUser, getAllUsers } from "../../api"
 import { User } from "../../models"
+import { UserForm } from "../../components/UserForm"
+import ReactPaginate from "react-paginate"
 
 export function UsersList() {
   const baseUrl: string = "/api/admin/users/"
-  const [users, setUsers] = useState<User[]>([])
   const [selectedUsers, setSelectedUsers] = useState<User[]>([])
-  let limit = 1
-  const [nextUrl, setNextUrl] = useState<string | undefined>(undefined)
-  const [previousUrl, setPreviousUrl] = useState<string | undefined>(undefined)
   const [search, setSearch] = useState<string>("")
+
+  const [users, setUsers] = useState<User[]>([])
+  const [offset, setOffset] = useState<number>(0)
+  const [itemsPerPage, setItemsPerPage] = useState<number>(5)
+  const currentUsers = users.slice(offset, offset + itemsPerPage)
+  const pageCount = Math.ceil(users.length / itemsPerPage)
 
   useEffect(() => {
     getData(baseUrl)
@@ -19,18 +22,7 @@ export function UsersList() {
 
   const getData = async (url: string) => {
     try {
-      const response = await getAllUsers(url)
-      setUsers(response.results)
-      if (response.next) {
-        setNextUrl("/api" + response.next.split("api")[1])
-      } else {
-        setNextUrl(undefined)
-      }
-      if (response.previous) {
-        setPreviousUrl("/api" + response.previous.split("api")[1])
-      } else {
-        setPreviousUrl(undefined)
-      }
+      setUsers(await getAllUsers(url))
     } catch (error) {
       console.log(error)
       toast.error("Failed to fetch users")
@@ -47,37 +39,25 @@ export function UsersList() {
     }
   }
 
-  const handleNext = () => {
-    if (nextUrl) getData(nextUrl)
-  }
-
-  const handleLast = () => {
-    if (previousUrl) getData(previousUrl)
-  }
-
-  const handleLimit = (value: number) => {
-    limit = value
-    getData(`${baseUrl}?limit=${limit}` + (search ? `&search=${search}` : ""))
-  }
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value)
-    if (!e.target.value) {
-      getData(`${baseUrl}?limit=${limit}`)
-      return
+  const deleteSelectedUsers = async () => {
+    try {
+      for (const user of selectedUsers) {
+        await deleteUser(user.id)
+      }
+      toast.success(`Deleted ${selectedUsers.length} users`)
+      getData(baseUrl)
+    } catch (error) {
+      toast.error("Failed to delete users")
     }
-    getData(`${baseUrl}?limit=${limit}&search=${e.target.value}`)
   }
 
-  const displayLimit = () => {
-    const limits = [1, 5, 10, 15, 20, 25]
-    return limits.map((limit) => {
-      return (
-        <option key={limit} value={limit} onClick={() => handleLimit(limit)}>
-          {limit}
-        </option>
+  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value)
+    setUsers(
+      await getAllUsers(
+        baseUrl + (e.target.value ? `?search=${e.target.value}` : "")
       )
-    })
+    )
   }
 
   const displayActionsButton = () => {
@@ -93,22 +73,27 @@ export function UsersList() {
         <button
           className="btn btn-error"
           disabled={!selectedUsers.length}
-          // onClick={deleteUser}
+          onClick={deleteSelectedUsers}
         >
           Delete
         </button>
         <select
           className="select w-full max-w-xs mb-4 select-bordered"
-          defaultValue={limit.toString()}
+          defaultValue={itemsPerPage.toString()}
+          onChange={(e) => setItemsPerPage(parseInt(e.target.value))}
         >
-          {displayLimit()}
+          <option value="1">1</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
         </select>
       </div>
     )
   }
 
-  const displayUsers = users.map((user) => {
-    return (
+  const displayUsers = () => {
+    return currentUsers.map((user) => (
       <tr key={user.id}>
         <th>
           <label>
@@ -160,15 +145,14 @@ export function UsersList() {
               <h3 className="font-bold text-lg">
                 Edit user: {user.first_name} {user.last_name}
               </h3>
-              {/* <UserForm user={user} onSubmit={updateUser} /> */}
+              <UserForm user={user} setUsers={setUsers} />
               <p className="text-sm text-center mt-2">Press "Esc" to close.</p>
             </div>
           </dialog>
-          <button className="btn btn-sm">Details</button>
         </td>
       </tr>
-    )
-  })
+    ))
+  }
 
   return (
     <div className="container mx-auto">
@@ -176,7 +160,6 @@ export function UsersList() {
       {displayActionsButton()}
       <div className="overflow-x-auto">
         <table className="table">
-          {/* head */}
           <thead>
             <tr>
               <th></th>
@@ -186,26 +169,24 @@ export function UsersList() {
               <th>✏️ Actions</th>
             </tr>
           </thead>
-          <tbody>{displayUsers}</tbody>
+          <tbody>{displayUsers()}</tbody>
         </table>
       </div>
-      <div className="join pt-4 flex justify-center mt-8">
-        <div className="join grid grid-cols-2">
-          <button
-            className="join-item btn btn-outline"
-            onClick={handleLast}
-            disabled={!previousUrl}
-          >
-            Previous
-          </button>
-          <button
-            className="join-item btn btn-outline"
-            onClick={handleNext}
-            disabled={!nextUrl}
-          >
-            Next
-          </button>
-        </div>
+      <div className="join flex justify-center mt-4">
+        <ReactPaginate
+          pageCount={pageCount}
+          pageRangeDisplayed={5}
+          marginPagesDisplayed={2}
+          onPageChange={(e) =>
+            setOffset((e.selected * itemsPerPage) % users.length)
+          }
+          pageClassName="join-item btn"
+          previousClassName="join-item btn"
+          nextClassName="join-item btn"
+          activeClassName="btn-primary"
+          breakLabel="..."
+          renderOnZeroPageCount={null}
+        />
       </div>
     </div>
   )

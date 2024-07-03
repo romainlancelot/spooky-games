@@ -1,4 +1,5 @@
 import { ApiResponse } from "../api_response/model"
+import { Reservation } from "../sessions/model"
 import { LoginResponse, User } from "./models"
 import { toast } from "react-toastify"
 
@@ -65,7 +66,8 @@ export async function registerUser(data: User): Promise<User> {
   }
 }
 
-export async function updateUser(data: User): Promise<User> {
+export async function updateLoggedUser(data: User): Promise<User> {
+  console.log(data)
   try {
     const response: Response = await fetch(`/api/users/me/`, {
       method: "PATCH",
@@ -78,7 +80,7 @@ export async function updateUser(data: User): Promise<User> {
     const json = await response.json()
     if (!response.ok) {
       Object.keys(json).forEach((key) => {
-        toast.error(`${key}: ${json[key]}`)
+        toast.error(`${key}: ${json[key as keyof typeof json]}`)
       })
       throw new Error("Failed to update user")
     }
@@ -88,10 +90,52 @@ export async function updateUser(data: User): Promise<User> {
   }
 }
 
-export async function getAllUsers(url: string): Promise<ApiResponse> {
+export async function updateUser(userId: number, data: User): Promise<User> {
   try {
-    const token = localStorage.getItem("token")
-    const response = await fetch(url, {
+    const response: Response = await fetch(`/api/admin/users/${userId}/`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(data),
+    })
+    const json: User = await response.json()
+    if (!response.ok) {
+      Object.keys(json).forEach((key) => {
+        toast.error(`${key}: ${json[key as keyof typeof json]}`)
+      })
+      throw new Error("Failed to update user")
+    }
+    return json
+  } catch (error) {
+    throw new Error("An error occurred while updating user")
+  }
+}
+
+export async function deleteUser(userId: number): Promise<null> {
+  try {
+    const response: Response = await fetch(`/api/admin/users/${userId}/`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+    console.log(response)
+    if (!response.ok) {
+      throw new Error("Failed to delete user")
+    }
+    return null
+  } catch (error) {
+    throw new Error("An error occurred while deleting user")
+  }
+}
+
+export async function getAllUsers(url: string): Promise<User[]> {
+  try {
+    const token: string | null = localStorage.getItem("token")
+    const users: User[] = []
+    const response: Response = await fetch("/api" + url.split("/api")[1], {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -99,8 +143,34 @@ export async function getAllUsers(url: string): Promise<ApiResponse> {
     if (!response.ok) {
       throw new Error("Failed to get users")
     }
-    return await response.json()
+    const json: ApiResponse = await response.json()
+    users.push(...json.results)
+    if (json.next) {
+      users.push(...(await getAllUsers(json.next)))
+    }
+    return users
   } catch (error) {
     throw new Error("An error occurred while getting users")
+  }
+}
+
+export async function getUserLoggedReservations(): Promise<Reservation[]> {
+  try {
+    const token: string | null = localStorage.getItem("token")
+    if (!token) {
+      throw new Error("You are not logged in")
+    }
+    const response: Response = await fetch("/api/users/me/reservations", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    if (!response.ok) {
+      throw new Error("Failed to get reservations")
+    }
+    const json: ApiResponse = await response.json()
+    return json.results
+  } catch (error) {
+    throw new Error("An error occurred while getting reservations")
   }
 }

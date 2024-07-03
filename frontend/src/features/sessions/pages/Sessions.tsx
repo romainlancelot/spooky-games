@@ -11,7 +11,7 @@ export function Sessions() {
 
   useEffect(() => {
     try {
-      getSessions()
+      getSessions("/api/games")
         .then((data) => setSessions(data))
         .catch(() => setSessions([]))
     } catch (error) {

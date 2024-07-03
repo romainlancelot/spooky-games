@@ -1,31 +1,46 @@
 import { useEffect, useState } from "react"
 import { calcPrice } from "../../global/components/Pricing"
-import { SessionsProps } from "../model"
+import { ParticipantProps, SessionReservation, SessionsProps } from "../model"
 import { getLogedUser } from "../../users/api"
+import { bookSession, getOpeningHours } from "../api"
 import { User } from "../../users/models"
 import { toast } from "react-toastify"
+import { NavigateFunction, useNavigate } from "react-router-dom"
 
 export function BookSessionsForm({ session }: { session: SessionsProps }) {
   const [rangeValue, setRangeValue] = useState(0)
   const [user, setUser] = useState<User | null>(null)
+  const [openingHours, setOpeningHours] = useState<Array<string> | null>(null)
+  const navigate: NavigateFunction = useNavigate()
 
   useEffect(() => {
     getLogedUser()
       .then((data) => setUser(data))
-      .catch((error) => console.error(error))
+      .catch((error) => toast.error(error.message))
+    getOpeningHours()
+      .then((data) => setOpeningHours(data))
+      .catch((error) => toast.error(error.message))
   }, [])
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
     const data = Object.fromEntries(formData)
-    window.scrollTo(0, 0)
-    if (!data.email || !data.phone || !data.content) {
-      toast.error("Please fill in all fields")
-      return
+    const participants: Array<ParticipantProps> = []
+    for (let i = 0; i < rangeValue; i++) {
+      participants.push({
+        first_name: data[`participant_${i}_first_name`].toString(),
+        last_name: data[`participant_${i}_last_name`].toString(),
+        email: data[`participant_${i}_email`].toString(),
+      })
     }
-    toast.success("Your message has been sent")
-    e.currentTarget.reset()
+    const body: SessionReservation = {
+      date: data.date.toString(),
+      reservation_time: data.reservation_time.toString(),
+      participants: participants,
+      price: parseInt(data.price.toString()),
+    }
+    bookSession(session.id, body).catch((error) => toast.error(error.message))
   }
 
   return (
@@ -80,10 +95,23 @@ export function BookSessionsForm({ session }: { session: SessionsProps }) {
           <i className="bi bi-calendar2-event"></i>
           <input type="date" className="grow" name="date" placeholder="Date" />
         </label>
-        <label className="input input-bordered flex items-center gap-2 mb-4">
-          <i className="bi bi-clock"></i>
-          <input type="time" className="grow" name="time" placeholder="Time" />
-        </label>
+        {openingHours && (
+          <>
+            <label className="input input-bordered flex items-center gap-2 mb-4">
+              <i className="bi bi-clock"></i>
+              <select
+                name="reservation_time"
+                className="select select-bordered"
+              >
+                {openingHours.map((hour) => (
+                  <option key={hour} value={hour}>
+                    {hour}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </>
+        )}
 
         <div className="divider my-10"></div>
 
@@ -97,7 +125,6 @@ export function BookSessionsForm({ session }: { session: SessionsProps }) {
           className="range"
           step={1}
           onChange={(e) => setRangeValue(parseInt(e.target.value))}
-          name="participants_count"
         />
         <div className="w-full flex justify-between text-xs px-2 mb-8">
           {[...Array(6)].map((_, index) => (
@@ -156,6 +183,15 @@ export function BookSessionsForm({ session }: { session: SessionsProps }) {
             : calcPrice(rangeValue)}
           €
         </p>
+        <input
+          type="hidden"
+          name="price"
+          value={
+            rangeValue > 0
+              ? calcPrice(rangeValue) * rangeValue
+              : calcPrice(rangeValue)
+          }
+        />
 
         <div className="text-center">
           <button className="btn btn-primary mt-10 w-1/2" type="submit">

@@ -6,6 +6,7 @@ from apps.core.views import (
     AuthenticatedUserView,
     AdminUserView,
     UserReservationList,
+    AdminUserDetailView,
 )
 
 __all__: list[str] = ["urlpatterns"]
@@ -17,4 +18,10 @@ urlpatterns: list[URLPattern] = [
     path("users/me/", AuthenticatedUserView.as_view(), name="me"),
     path("users/me/reservations/", UserReservationList.as_view(), name="reservations"),
     path("admin/users/", AdminUserView.as_view(), name="users"),
+    path("admin/users/<int:pk>/", AdminUserDetailView.as_view(), name="user"),
+    path(
+        "admin/users/<int:pk>/reservations/",
+        UserReservationList.as_view(),
+        name="user_reservations",
+    ),
 ]

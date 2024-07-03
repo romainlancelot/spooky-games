@@ -3,6 +3,7 @@ from apps.reservations.views import (
     GameDetailView,
     GameListView,
     ReservationListCreateView,
+    OpeningHoursView,
 )
 
 __all__: list[str] = ["urlpatterns"]
@@ -15,4 +16,5 @@ urlpatterns: list[URLPattern] = [
         ReservationListCreateView.as_view(),
         name="game-reservation-list",
     ),
+    path("games/opening-hours", OpeningHoursView.as_view(), name="opening-hours"),
 ]

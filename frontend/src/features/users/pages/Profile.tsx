@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { User } from "../models"
 import { getLogedUser } from "../api"
 import { ModifyForm } from "../components/ModifyForm"
+import { ReservationList } from "../components/ReservationsList"
 
 export function Profile() {
   const [user, setUser] = useState<User | null>(null)
@@ -38,6 +39,8 @@ export function Profile() {
           </div>
         </div>
         <ModifyForm user={user} setUser={setUser} />
+        <div className="divider"> </div>
+        <ReservationList />
       </div>
     </div>
   )

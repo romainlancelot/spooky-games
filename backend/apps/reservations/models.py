@@ -41,9 +41,7 @@ class Reservation(models.Model):
         max_length=100, choices=RESERVATION_TIME_CHOICES
     )
     date: models.DateField = models.DateField()
-    num_players: models.IntegerField = models.IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(6)]
-    )
+    price: models.DecimalField = models.DecimalField(max_digits=5, decimal_places=2)
     game: models.ForeignKey = models.ForeignKey(
         Game, on_delete=models.CASCADE, related_name="reservations"
     )

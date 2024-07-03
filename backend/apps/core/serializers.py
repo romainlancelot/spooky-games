@@ -46,3 +46,20 @@ class UserSerializer(serializers.ModelSerializer):
             setattr(instance, attr, value)
         instance.save()
         return instance
+
+
+class AdminSerializer(UserSerializer):
+    class Meta(UserSerializer.Meta):
+        fields: list[str] = [
+            "id",
+            "username",
+            "password",
+            "email",
+            "first_name",
+            "last_name",
+            "is_staff",
+            "is_superuser",
+            "is_active",
+            "date_joined",
+        ]
+        read_only_fields: list[str] = ["id", "is_active", "date_joined"]

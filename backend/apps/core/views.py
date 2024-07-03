@@ -1,12 +1,13 @@
 from typing import Any
 from django.contrib.auth.models import User
 from django.db.models.query import QuerySet
+from rest_framework import filters
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status, generics
-from apps.core.serializers import UserSerializer
+from apps.core.serializers import UserSerializer, AdminSerializer
 from apps.core.permissions import IsAdminOrSuperUser, CanModifyUser
 from apps.reservations.models import Reservation
 from apps.reservations.serializers import ReservationSerializer
@@ -15,8 +16,9 @@ __all__: list[str] = [
     "LogoutView",
     "RegisterView",
     "AuthenticatedUserView",
-    "AdminUserView",
     "UserReservationList",
+    "AdminUserView",
+    "AdminUserDetailView",
 ]
 
 
@@ -47,10 +49,22 @@ class AuthenticatedUserView(APIView):
         serializer.save()
         return Response(serializer.data)
 
+    def delete(self, request: Request) -> Response:
+        request.user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class AdminUserView(generics.ListAPIView):
     queryset: QuerySet[User] = User.objects.all()
     serializer_class: type[UserSerializer] = UserSerializer  # type: ignore
+    permission_classes: list[BasePermission] = [IsAuthenticated, CanModifyUser]
+    filter_backends: list[Any] = [filters.SearchFilter]
+    search_fields: list[str] = ["username", "email"]
+
+
+class AdminUserDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset: QuerySet[User] = User.objects.all()
+    serializer_class: type[AdminSerializer] = AdminSerializer
     permission_classes: list[BasePermission] = [IsAuthenticated, IsAdminOrSuperUser]
 
 

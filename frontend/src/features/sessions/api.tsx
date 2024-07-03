@@ -1,23 +1,54 @@
 import { toast } from "react-toastify"
 import { ApiResponse } from "../api_response/model"
-import { SessionsProps } from "./model"
+import { SessionReservation, SessionsProps } from "./model"
 
-export async function getSessions(): Promise<SessionsProps[]> {
+export async function getSessions(url: string): Promise<SessionsProps[]> {
   try {
-    const response = await fetch("/api/games")
+    const response = await fetch(url)
+    const sessions: SessionsProps[] = []
     if (!response.ok) {
       throw new Error("Failed to fetch sessions")
     }
     const data: ApiResponse = await response.json()
-    return data.results
+    sessions.push(...data.results)
+    if (data.next) {
+      sessions.push(...(await getSessions(data.next)))
+    }
+    return sessions
   } catch (error) {
     throw new Error("An error occurred while fetching sessions")
   }
 }
 
-export async function getSession(session_id: number): Promise<SessionsProps> {
+export async function createSession(data: FormData): Promise<void> {
   try {
-    const response = await fetch(`/api/games/${session_id}`)
+    const token = localStorage.getItem("token")
+    if (!token) {
+      throw new Error("You are not logged in")
+    }
+    const response = await fetch("/api/games/", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: data,
+    })
+    if (!response.ok) {
+      const responseData = await response.json()
+      Object.keys(responseData).forEach((key) => {
+        toast.error(`${key}: ${responseData[key]}`)
+      })
+      return
+    }
+    toast.success("Session created successfully")
+  } catch (error) {
+    toast.error("An error occurred while creating session")
+  }
+}
+
+export async function getSession(sessionId: number): Promise<SessionsProps> {
+  try {
+    const response = await fetch(`/api/games/${sessionId}`)
     if (!response.ok) {
       throw new Error("Failed to fetch session")
     }
@@ -27,18 +58,65 @@ export async function getSession(session_id: number): Promise<SessionsProps> {
   }
 }
 
-export async function bookSession(session_id: number): Promise<void> {
+export async function deleteSession(sessionId: number): Promise<void> {
   try {
-    const response = await fetch(`/api/sessions/$id/reservations/`, {
+    const token = localStorage.getItem("token")
+    if (!token) {
+      throw new Error("You are not logged in")
+    }
+    const response = await fetch(`/api/games/${sessionId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    if (!response.ok) {
+      throw new Error("Failed to delete session")
+    }
+  } catch (error) {
+    toast.error("An error occurred while deleting session")
+  }
+}
+
+export async function getOpeningHours(): Promise<Array<string>> {
+  try {
+    const response = await fetch("/api/games/opening-hours")
+    if (!response.ok) {
+      throw new Error("Failed to fetch opening hours")
+    }
+    const data = await response.json()
+    return data?.opening_hours || []
+  } catch (error) {
+    throw new Error("An error occurred while fetching opening hours")
+  }
+}
+
+export async function bookSession(
+  sessionId: number,
+  data: SessionReservation
+): Promise<void> {
+  try {
+    const token = localStorage.getItem("token")
+    if (!token) {
+      throw new Error("You are not logged in")
+    }
+    const response = await fetch(`/api/games/${sessionId}/reservations/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ session_id: session_id }),
+      body: JSON.stringify(data),
     })
+    console.log(response)
     if (!response.ok) {
-      toast.error("Failed to book session")
+      const responseData = await response.json()
+      Object.keys(responseData).forEach((key) => {
+        toast.error(`${key}: ${responseData[key]}`)
+      })
+      return
     }
+    toast.success("Session booked successfully")
   } catch (error) {
     toast.error("An error occurred while booking session")
   }
