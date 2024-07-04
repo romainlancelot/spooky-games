@@ -22,7 +22,7 @@ export function BookSessionsForm({ session }: { session: SessionsProps }) {
       .catch((error) => toast.error(error.message))
   }, [])
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
     const data = Object.fromEntries(formData)
@@ -40,7 +40,12 @@ export function BookSessionsForm({ session }: { session: SessionsProps }) {
       participants: participants,
       price: parseInt(data.price.toString()),
     }
-    bookSession(session.id, body).catch((error) => toast.error(error.message))
+    await bookSession(session.id, body)
+      .then(() => {
+        toast.success("Session booked successfully")
+        navigate("/profile")
+      })
+      .catch((error) => toast.error(error.message))
   }
 
   return (

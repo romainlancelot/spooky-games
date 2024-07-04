@@ -1,13 +1,25 @@
 from django.db.models.query import QuerySet
 from rest_framework import generics, filters
-from rest_framework.permissions import BasePermission, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import (
+    BasePermission,
+    IsAuthenticatedOrReadOnly,
+    IsAuthenticated,
+)
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 from apps.reservations.models import RESERVATION_TIME_CHOICES, Game, Reservation
 from apps.reservations.serializers import GameSerializer, ReservationSerializer
+from apps.core.permissions import IsAdminOrSuperUser
 
-__all__: list[str] = ["GameListView", "GameDetailView", "ReservationListCreateView"]
+__all__: list[str] = [
+    "GameListView",
+    "GameDetailView",
+    "ReservationListCreateView",
+    "ReservationAdminView",
+    "ReservationAdminDetailView",
+    "OpeningHoursView",
+]
 
 
 class GameListView(generics.ListCreateAPIView):
@@ -35,6 +47,20 @@ class ReservationListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer: ReservationSerializer) -> None:
         return serializer.save(game=self.get_object(), owner=self.request.user)
+
+
+class ReservationAdminView(generics.ListAPIView):
+    queryset: QuerySet[Reservation] = Reservation.objects.all()
+    serializer_class: type[ReservationSerializer] = ReservationSerializer
+    permission_classes: list[BasePermission] = [IsAuthenticated, IsAdminOrSuperUser]
+    filter_backends: list[filters.BaseFilterBackend] = [filters.SearchFilter]
+    search_fields: list[str] = ["date", "owner__username"]
+
+
+class ReservationAdminDetailView(generics.DestroyAPIView):
+    queryset: QuerySet[Reservation] = Reservation.objects.all()
+    serializer_class: type[ReservationSerializer] = ReservationSerializer
+    permission_classes: list[BasePermission] = [IsAuthenticated, IsAdminOrSuperUser]
 
 
 class OpeningHoursView(APIView):

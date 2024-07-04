@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
-import { deleteSession, getSessions } from "../../api"
+import { deleteReservation, getReservations } from "../../api"
 import ReactPaginate from "react-paginate"
-import { SessionsProps } from "../../model"
-import { NavLink } from "react-router-dom"
+import { Reservation } from "../../model"
 
-export function SessionsList() {
-  const baseUrl: string = "/api/games"
-  const [selectedData, setSelectedData] = useState<SessionsProps[]>([])
+export function ReservationsList() {
+  const baseUrl: string = "/api/admin/reservations"
+  const [selectedData, setSelectedData] = useState<Reservation[]>([])
   const [search, setSearch] = useState<string>("")
 
-  const [data, setData] = useState<SessionsProps[]>([])
+  const [data, setData] = useState<Reservation[]>([])
   const [offset, setOffset] = useState<number>(0)
   const [itemsPerPage, setItemsPerPage] = useState<number>(5)
   const currentData = data.slice(offset, offset + itemsPerPage)
@@ -22,21 +21,22 @@ export function SessionsList() {
 
   const getData = async (url: string) => {
     try {
-      setData(await getSessions(url))
+      setData(await getReservations(url))
     } catch (error) {
-      toast.error("Failed to fetch sessions")
+      console.log(error)
+      toast.error("Failed to fetch reservations")
     }
   }
 
   const handleSelect = (
     e: React.ChangeEvent<HTMLInputElement>,
-    session: SessionsProps
+    reservation: Reservation
   ) => {
     if (e.target.checked) {
-      setSelectedData([...selectedData, session])
+      setSelectedData([...selectedData, reservation])
     } else {
       setSelectedData(
-        selectedData.filter((selected) => selected.id !== session.id)
+        selectedData.filter((selected) => selected.id !== reservation.id)
       )
     }
   }
@@ -44,10 +44,10 @@ export function SessionsList() {
   const deleteSelectedData = async () => {
     try {
       for (const session of selectedData) {
-        await deleteSession(session.id)
+        await deleteReservation(session.id)
         continue
       }
-      toast.success(`Deleted ${selectedData.length} sessions`)
+      toast.success(`Deleted ${selectedData.length} reservations`)
       setData(data.filter((session) => !selectedData.includes(session)))
       setSelectedData([])
     } catch (error) {
@@ -58,7 +58,7 @@ export function SessionsList() {
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value)
     setData(
-      await getSessions(
+      await getReservations(
         baseUrl + (e.target.value ? `?search=${e.target.value}` : "")
       )
     )
@@ -67,9 +67,6 @@ export function SessionsList() {
   const displayActionsButton = () => {
     return (
       <div className="flex justify-end gap-3">
-        <NavLink to="/admin/sessions/create" className="btn btn-primary">
-          Create
-        </NavLink>
         <input
           type="text"
           className="input input-bordered w-full mb-2 sm:mb-0"
@@ -111,41 +108,43 @@ export function SessionsList() {
             />
           </label>
         </th>
-        <td>{session.name}</td>
-        <td>
+        <td>{session.date}</td>
+        <td>{session.reservation_time}</td>
+        <td className="flex items-center gap-2">
           <img
-            src={session.image}
-            alt={session.name}
-            className="w-10 h-10 object-cover rounded-full"
+            src={session.game.image}
+            alt={session.game.name}
+            className="w-10 h-10 rounded-full"
           />
+          {session.game.name}
         </td>
-        <td>{session.max_players}</td>
-        <td>{new Date(session.created_at).toLocaleString()}</td>
-        <td>{new Date(session.updated_at).toLocaleString()}</td>
+        <td>{session.owner.username}</td>
         <td>
-          <NavLink to={`/admin/sessions/${session.id}`} className="btn btn-sm">
-            Edit
-          </NavLink>
+          {session.participants.length} player
+          {session.participants.length > 1 ? "s" : ""}
         </td>
+        <td>{session.price}€</td>
       </tr>
     ))
   }
 
   return (
     <div className="container mx-auto">
-      <h1 className="text-4xl font-bold text-center my-10">Manage sessions</h1>
+      <h1 className="text-4xl font-bold text-center my-10">
+        Manage reservations
+      </h1>
       {displayActionsButton()}
       <div className="overflow-x-auto">
         <table className="table">
           <thead>
             <tr>
               <th></th>
-              <th>👤 Name</th>
-              <th>🖼️ Image</th>
-              <th>🎮 Max players</th>
-              <th>📅 Created at</th>
-              <th>📅 Updated at</th>
-              <th>✏️ Actions</th>
+              <th>📅 Date</th>
+              <th>⏰ Time</th>
+              <th>🎮 Game</th>
+              <th>👤 Booker</th>
+              <th>👥 Participants</th>
+              <th>💰 Price</th>
             </tr>
           </thead>
           <tbody>{displaySessions()}</tbody>

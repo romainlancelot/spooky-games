@@ -18,8 +18,7 @@ export function BookSession() {
     } catch (error) {
       toast.error("Failed to fetch session")
     }
-  }),
-    [session_id]
+  }, [session_id])
 
   return (
     <div className="my-8 flex justify-center">

@@ -79,6 +79,9 @@ export function Navbar({
                 <li>
                   <NavLink to="/admin/sessions">🔧 Sessions</NavLink>
                 </li>
+                <li>
+                  <NavLink to="/admin/reservations">🔧 Reservations</NavLink>
+                </li>
               </div>
             ) : null}
           </ul>

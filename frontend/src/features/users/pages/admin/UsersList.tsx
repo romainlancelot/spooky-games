@@ -10,11 +10,11 @@ export function UsersList() {
   const [selectedUsers, setSelectedUsers] = useState<User[]>([])
   const [search, setSearch] = useState<string>("")
 
-  const [users, setUsers] = useState<User[]>([])
+  const [data, setData] = useState<User[]>([])
   const [offset, setOffset] = useState<number>(0)
   const [itemsPerPage, setItemsPerPage] = useState<number>(5)
-  const currentUsers = users.slice(offset, offset + itemsPerPage)
-  const pageCount = Math.ceil(users.length / itemsPerPage)
+  const currentData = data.slice(offset, offset + itemsPerPage)
+  const pageCount = Math.ceil(data.length / itemsPerPage)
 
   useEffect(() => {
     getData(baseUrl)
@@ -22,7 +22,7 @@ export function UsersList() {
 
   const getData = async (url: string) => {
     try {
-      setUsers(await getAllUsers(url))
+      setData(await getAllUsers(url))
     } catch (error) {
       console.log(error)
       toast.error("Failed to fetch users")
@@ -45,7 +45,8 @@ export function UsersList() {
         await deleteUser(user.id)
       }
       toast.success(`Deleted ${selectedUsers.length} users`)
-      getData(baseUrl)
+      setData(data.filter((user) => !selectedUsers.includes(user)))
+      setSelectedUsers([])
     } catch (error) {
       toast.error("Failed to delete users")
     }
@@ -53,7 +54,7 @@ export function UsersList() {
 
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value)
-    setUsers(
+    setData(
       await getAllUsers(
         baseUrl + (e.target.value ? `?search=${e.target.value}` : "")
       )
@@ -93,7 +94,7 @@ export function UsersList() {
   }
 
   const displayUsers = () => {
-    return currentUsers.map((user) => (
+    return currentData.map((user) => (
       <tr key={user.id}>
         <th>
           <label>
@@ -145,7 +146,7 @@ export function UsersList() {
               <h3 className="font-bold text-lg">
                 Edit user: {user.first_name} {user.last_name}
               </h3>
-              <UserForm user={user} setUsers={setUsers} />
+              <UserForm user={user} setUsers={setData} />
               <p className="text-sm text-center mt-2">Press "Esc" to close.</p>
             </div>
           </dialog>
@@ -178,7 +179,7 @@ export function UsersList() {
           pageRangeDisplayed={5}
           marginPagesDisplayed={2}
           onPageChange={(e) =>
-            setOffset((e.selected * itemsPerPage) % users.length)
+            setOffset((e.selected * itemsPerPage) % data.length)
           }
           pageClassName="join-item btn"
           previousClassName="join-item btn"

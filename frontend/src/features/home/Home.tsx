@@ -7,6 +7,7 @@ import TeamBuilding from "../../assets/team_building.png"
 import UniqueScenarios from "../../assets/unique_scenarios.png"
 import Homepage from "../../assets/homepage.png"
 import { ContactForm } from "../contact/components/ContactForm"
+import { NavLink } from "react-router-dom"
 
 const spookyAdvantages: CardProps[] = [
   {
@@ -128,7 +129,9 @@ function Home() {
       </div>
 
       <div className="text-center m-10">
-        <button className="btn btn-primary">Book a spooky game now!</button>
+        <NavLink to="/sessions" className="btn btn-primary">
+          Book a spooky game now!
+        </NavLink>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">

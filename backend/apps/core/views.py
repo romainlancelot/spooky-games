@@ -71,6 +71,8 @@ class AdminUserDetailView(generics.RetrieveUpdateDestroyAPIView):
 class UserReservationList(generics.ListAPIView):
     serializer_class: type[ReservationSerializer] = ReservationSerializer
     permission_classes: list[BasePermission] = [IsAuthenticated]
+    filter_backends: list[Any] = [filters.SearchFilter]
+    search_fields: list[str] = ["date", "game__name", "price"]
 
     def get_queryset(self) -> QuerySet[Reservation]:
         return Reservation.objects.filter(owner=self.request.user)

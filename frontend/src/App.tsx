@@ -17,6 +17,7 @@ import { ProtectedRoute } from "./features/global/components/ProtectedRoute.tsx"
 import { UsersList } from "./features/users/pages/admin/UsersList.tsx"
 import { SessionsList } from "./features/sessions/pages/admin/SessionList.tsx"
 import { CreateSession } from "./features/sessions/pages/admin/CreateSession.tsx"
+import { ReservationsList } from "./features/sessions/pages/admin/ReservationsList.tsx"
 
 function App() {
   const [user, setUser] = useState<User | null>(null)
@@ -59,6 +60,7 @@ function App() {
             <Route path="/admin/users" element={<UsersList />} />
             <Route path="/admin/sessions" element={<SessionsList />} />
             <Route path="/admin/sessions/create" element={<CreateSession />} />
+            <Route path="/admin/reservations" element={<ReservationsList />} />
           </Route>
 
           <Route

@@ -1,6 +1,6 @@
 import { toast } from "react-toastify"
 import { ApiResponse } from "../api_response/model"
-import { SessionReservation, SessionsProps } from "./model"
+import { SessionReservation, SessionsProps, Reservation } from "./model"
 
 export async function getSessions(url: string): Promise<SessionsProps[]> {
   try {
@@ -114,10 +114,61 @@ export async function bookSession(
       Object.keys(responseData).forEach((key) => {
         toast.error(`${key}: ${responseData[key]}`)
       })
-      return
+      throw new Error("Failed to book session")
     }
     toast.success("Session booked successfully")
   } catch (error) {
     toast.error("An error occurred while booking session")
+    throw new Error("An error occurred while booking session")
+  }
+}
+
+export async function getReservations(url: string): Promise<Reservation[]> {
+  try {
+    const token: string | null = localStorage.getItem("token")
+    const reservations: Reservation[] = []
+    if (!token) {
+      throw new Error("You are not logged in")
+    }
+    const response: Response = await fetch("/api" + url.split("/api")[1], {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    if (!response.ok) {
+      console.log(response)
+      throw new Error("Failed to get reservations")
+    }
+    const json: ApiResponse = await response.json()
+    reservations.push(...json.results)
+    if (json.next) {
+      reservations.push(...(await getReservations(json.next)))
+    }
+    return reservations
+  } catch (error) {
+    throw new Error("An error occurred while getting reservations")
+  }
+}
+
+export async function deleteReservation(reservationId: number): Promise<void> {
+  try {
+    const token: string | null = localStorage.getItem("token")
+    if (!token) {
+      throw new Error("You are not logged in")
+    }
+    const response: Response = await fetch(
+      `/api/admin/reservations/${reservationId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    if (!response.ok) {
+      throw new Error("Failed to delete reservation")
+    }
+  } catch (error) {
+    throw new Error("An error occurred while deleting reservation")
   }
 }

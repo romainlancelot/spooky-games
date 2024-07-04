@@ -154,13 +154,15 @@ export async function getAllUsers(url: string): Promise<User[]> {
   }
 }
 
-export async function getUserLoggedReservations(): Promise<Reservation[]> {
+export async function getUserLoggedReservations(
+  url: string
+): Promise<Reservation[]> {
   try {
     const token: string | null = localStorage.getItem("token")
     if (!token) {
       throw new Error("You are not logged in")
     }
-    const response: Response = await fetch("/api/users/me/reservations", {
+    const response: Response = await fetch("/api" + url.split("/api")[1], {
       headers: {
         Authorization: `Bearer ${token}`,
       },
