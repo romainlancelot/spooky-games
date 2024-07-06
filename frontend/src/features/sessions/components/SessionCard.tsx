@@ -12,7 +12,9 @@ export function SessionCard({
   return (
     <div className="card w-full bg-base-300 shadow-xl">
       <figure>
-        <img src={image} alt={name} className="h-96 w-full object-cover" />
+        <a href={`/sessions/${id}`}>
+          <img src={image} alt={name} className="h-96 w-full object-cover" />
+        </a>
       </figure>
       <div className="card-body">
         <h2 className="card-title">{name}</h2>
@@ -24,7 +26,13 @@ export function SessionCard({
             Created on: {created_at.split("T")[0]}
           </span>
         </div>
-        <p>{description}</p>
+        <p className="line-clamp-3">
+          {description.substring(0, 100)}
+          {description.length > 100 ? "..." : ""}
+        </p>
+        <NavLink to={`/sessions/${id}`} className="btn mt-4">
+          View details
+        </NavLink>
         <NavLink to={`/sessions/${id}/book`} className="btn btn-primary mt-4">
           Book the {name} session
         </NavLink>

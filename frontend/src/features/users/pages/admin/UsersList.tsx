@@ -21,12 +21,9 @@ export function UsersList() {
   }, [])
 
   const getData = async (url: string) => {
-    try {
-      setData(await getAllUsers(url))
-    } catch (error) {
-      console.log(error)
-      toast.error("Failed to fetch users")
-    }
+    await getAllUsers(url)
+      .then((users) => setData(users))
+      .catch(() => toast.error("Failed to fetch users"))
   }
 
   const handleSelect = (e: React.ChangeEvent<HTMLInputElement>, user: User) => {
@@ -40,25 +37,22 @@ export function UsersList() {
   }
 
   const deleteSelectedUsers = async () => {
-    try {
-      for (const user of selectedUsers) {
-        await deleteUser(user.id)
-      }
-      toast.success(`Deleted ${selectedUsers.length} users`)
-      setData(data.filter((user) => !selectedUsers.includes(user)))
-      setSelectedUsers([])
-    } catch (error) {
-      toast.error("Failed to delete users")
+    for (const user of selectedUsers) {
+      await deleteUser(user.id)
+        .then(() => {
+          setData(data.filter((u) => u.id !== user.id))
+          setSelectedUsers(selectedUsers.filter((u) => u.id !== user.id))
+        })
+        .catch(() =>
+          toast.error(`Failed to delete ${user.first_name} ${user.last_name}`)
+        )
     }
+    toast.success(`Deleted ${selectedUsers.length} users`)
   }
 
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value)
-    setData(
-      await getAllUsers(
-        baseUrl + (e.target.value ? `?search=${e.target.value}` : "")
-      )
-    )
+    await getData(baseUrl + (e.target.value ? `?search=${e.target.value}` : ""))
   }
 
   const displayActionsButton = () => {
@@ -106,18 +100,11 @@ export function UsersList() {
           </label>
         </th>
         <td>
-          <div className="flex items-center gap-3">
-            <div className="avatar">
-              <div className="mask mask-squircle w-12 h-12">
-                <img src="" alt="Profile picture" />
-              </div>
+          <div>
+            <div className="font-bold">
+              {user.first_name} {user.last_name}
             </div>
-            <div>
-              <div className="font-bold">
-                {user.first_name} {user.last_name}
-              </div>
-              <div className="text-sm opacity-50">{user.username}</div>
-            </div>
+            <div className="text-sm opacity-50">{user.username}</div>
           </div>
         </td>
         <td>

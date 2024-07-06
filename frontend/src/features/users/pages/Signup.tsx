@@ -19,13 +19,9 @@ export function Signup() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = Object.fromEntries(new FormData(e.currentTarget))
-    try {
-      await registerUser(formData as unknown as User)
-      toast.success("Account created successfully. Please login.")
-    } catch (error) {
-      console.error(error)
-      toast.error("Something went wrong. Please try again.")
-    }
+    await registerUser(formData as unknown as User)
+      .then(() => toast.success("Account created successfully. Please login."))
+      .catch(() => toast.error("Failed to create account."))
   }
 
   return (

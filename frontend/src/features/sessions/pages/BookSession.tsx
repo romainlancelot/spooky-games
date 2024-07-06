@@ -11,13 +11,9 @@ export function BookSession() {
   const session_id: number = Number(useParams().id)
 
   useEffect(() => {
-    try {
-      getSession(session_id)
-        .then((data) => setSession(data))
-        .catch(() => setSession(null))
-    } catch (error) {
-      toast.error("Failed to fetch session")
-    }
+    getSession(session_id)
+      .then((data) => setSession(data))
+      .catch(() => toast.error("Failed to fetch session"))
   }, [session_id])
 
   return (

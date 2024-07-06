@@ -91,7 +91,7 @@ const spookyFaq: AccordionProps[] = [
 
 function Home() {
   return (
-    <div className="my-8">
+    <div>
       <div
         className="hero min-h-screen rounded-xl"
         style={{

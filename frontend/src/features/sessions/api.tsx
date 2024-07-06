@@ -38,11 +38,10 @@ export async function createSession(data: FormData): Promise<void> {
       Object.keys(responseData).forEach((key) => {
         toast.error(`${key}: ${responseData[key]}`)
       })
-      return
+      throw new Error("Failed to create session")
     }
-    toast.success("Session created successfully")
   } catch (error) {
-    toast.error("An error occurred while creating session")
+    throw new Error("An error occurred while creating session")
   }
 }
 
@@ -55,6 +54,38 @@ export async function getSession(sessionId: number): Promise<SessionsProps> {
     return await response.json()
   } catch (error) {
     throw new Error("An error occurred while fetching session")
+  }
+}
+
+export async function updateSession(
+  data: FormData,
+  sessionId: number
+): Promise<SessionsProps> {
+  try {
+    const token = localStorage.getItem("token")
+    if (!token) {
+      throw new Error("You are not logged in")
+    }
+    if (data.get("image") === "undefined") {
+      data.delete("image")
+    }
+    const response = await fetch(`/api/games/${sessionId}/`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: data,
+    })
+    if (!response.ok) {
+      const responseData = await response.json()
+      Object.keys(responseData).forEach((key) => {
+        toast.error(`${key}: ${responseData[key]}`)
+      })
+      throw new Error("Failed to update session")
+    }
+    return await response.json()
+  } catch (error) {
+    throw new Error("An error occurred while updating session")
   }
 }
 
@@ -74,7 +105,7 @@ export async function deleteSession(sessionId: number): Promise<void> {
       throw new Error("Failed to delete session")
     }
   } catch (error) {
-    toast.error("An error occurred while deleting session")
+    throw new Error("An error occurred while deleting session")
   }
 }
 
@@ -116,9 +147,7 @@ export async function bookSession(
       })
       throw new Error("Failed to book session")
     }
-    toast.success("Session booked successfully")
   } catch (error) {
-    toast.error("An error occurred while booking session")
     throw new Error("An error occurred while booking session")
   }
 }

@@ -10,12 +10,9 @@ export function Profile() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    try {
-      getLogedUser().then((data) => setUser(data))
-    } catch (error) {
-      console.error(error)
-      navigate("/login")
-    }
+    getLogedUser()
+      .then((data) => setUser(data))
+      .catch(() => navigate("/login"))
   }, [navigate])
 
   return (

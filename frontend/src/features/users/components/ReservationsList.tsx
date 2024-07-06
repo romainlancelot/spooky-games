@@ -42,24 +42,30 @@ export function ReservationList() {
 
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value)
-    setData(
-      await getUserLoggedReservations(
-        baseUrl + (e.target.value ? `?search=${e.target.value}` : "")
-      )
+    await getUserLoggedReservations(
+      baseUrl + (e.target.value ? `?search=${e.target.value}` : "")
     )
   }
 
   const deleteSelectedData = async () => {
-    try {
-      for (const reservation of selectedData) {
-        await deleteReservation(reservation.id)
-      }
-      toast.success(`Deleted ${selectedData.length} reservations`)
-      setData(data.filter((reservation) => !selectedData.includes(reservation)))
-      setSelectedData([])
-    } catch (error) {
-      toast.error("Failed to delete reservations")
+    for (const reservation of selectedData) {
+      await deleteReservation(reservation.id)
+        .then(() => {
+          setData(
+            data.filter((reservation) => reservation.id !== reservation.id)
+          )
+          setSelectedData(
+            selectedData.filter(
+              (reservation) => reservation.id !== reservation.id
+            )
+          )
+        })
+        .catch(() =>
+          toast.error(`Failed to delete reservation ${reservation.id}`)
+        )
+      continue
     }
+    toast.success(`Deleted ${selectedData.length} reservations`)
   }
 
   const displayActionsButton = () => {
@@ -106,15 +112,29 @@ export function ReservationList() {
             />
           </label>
         </th>
-        <td>
-          <img
-            src={reservation.game.image}
-            alt={reservation.game.name}
-            className="w-20 h-20 object-cover rounded-lg"
-          />
-        </td>
-        <td>{reservation.game.name}</td>
-        <td>{reservation.game.description}</td>
+        {reservation.game !== null ? (
+          <>
+            <td>
+              <img
+                src={reservation.game.image}
+                alt={reservation.game.name}
+                className="w-20 h-20 object-cover rounded-lg"
+              />
+            </td>
+            <td>{reservation.game.name}</td>
+            <td>
+              {reservation.game.description.substring(0, 100)}
+              {reservation.game.description.length > 100 ? "..." : ""}
+            </td>
+          </>
+        ) : (
+          <>
+            <td colSpan={3} className="text-center">
+              This game not exists anymore
+            </td>
+          </>
+        )}
+
         <td>
           {reservation.date} at {reservation.reservation_time}
         </td>
@@ -134,7 +154,7 @@ export function ReservationList() {
             )}
           </ul>
         </td>
-        <td>{reservation.price}</td>
+        <td>{reservation.price}€</td>
       </tr>
     ))
   }

@@ -21,11 +21,9 @@ export function SessionsList() {
   }, [])
 
   const getData = async (url: string) => {
-    try {
-      setData(await getSessions(url))
-    } catch (error) {
-      toast.error("Failed to fetch sessions")
-    }
+    await getSessions(url)
+      .then((sessions) => setData(sessions))
+      .catch(() => toast.error("Failed to fetch sessions"))
   }
 
   const handleSelect = (
@@ -42,26 +40,20 @@ export function SessionsList() {
   }
 
   const deleteSelectedData = async () => {
-    try {
-      for (const session of selectedData) {
-        await deleteSession(session.id)
-        continue
-      }
-      toast.success(`Deleted ${selectedData.length} sessions`)
-      setData(data.filter((session) => !selectedData.includes(session)))
-      setSelectedData([])
-    } catch (error) {
-      toast.error("Failed to delete sessions")
+    for (const session of selectedData) {
+      await deleteSession(session.id)
+        .then(() => {
+          setData(data.filter((s) => s.id !== session.id))
+          setSelectedData(selectedData.filter((s) => s.id !== session.id))
+          toast.success(`Deleted ${session.name}`)
+        })
+        .catch(() => toast.error(`Failed to delete ${session.name}`))
     }
   }
 
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value)
-    setData(
-      await getSessions(
-        baseUrl + (e.target.value ? `?search=${e.target.value}` : "")
-      )
-    )
+    await getData(baseUrl + (e.target.value ? `?search=${e.target.value}` : ""))
   }
 
   const displayActionsButton = () => {
@@ -123,7 +115,10 @@ export function SessionsList() {
         <td>{new Date(session.created_at).toLocaleString()}</td>
         <td>{new Date(session.updated_at).toLocaleString()}</td>
         <td>
-          <NavLink to={`/admin/sessions/${session.id}`} className="btn btn-sm">
+          <NavLink
+            to={`/admin/sessions/${session.id}/edit`}
+            className="btn btn-sm"
+          >
             Edit
           </NavLink>
         </td>

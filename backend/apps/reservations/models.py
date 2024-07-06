@@ -27,12 +27,12 @@ class Game(models.Model):
 
 class Participant(models.Model):
     id: models.AutoField = models.AutoField(primary_key=True)
-    reservation: models.ForeignKey = models.ForeignKey(
-        "Reservation", on_delete=models.CASCADE, related_name="participants"
-    )
     first_name: models.CharField = models.CharField(max_length=100)
     last_name: models.CharField = models.CharField(max_length=100)
     email: models.EmailField = models.EmailField()
+    reservation: models.ForeignKey = models.ForeignKey(
+        "Reservation", on_delete=models.CASCADE, related_name="participants"
+    )
 
 
 class Reservation(models.Model):
@@ -43,7 +43,7 @@ class Reservation(models.Model):
     date: models.DateField = models.DateField()
     price: models.DecimalField = models.DecimalField(max_digits=5, decimal_places=2)
     game: models.ForeignKey = models.ForeignKey(
-        Game, on_delete=models.CASCADE, related_name="reservations"
+        Game, on_delete=models.SET_NULL, related_name="reservations", null=True
     )
     owner: models.ForeignKey = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="reservations"

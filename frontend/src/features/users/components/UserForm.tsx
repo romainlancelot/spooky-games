@@ -28,21 +28,19 @@ export function UserForm({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = Object.fromEntries(new FormData(e.currentTarget).entries())
-    try {
-      await updateUser(copiedUser.id, {
-        ...copiedUser,
-        ...formData,
-        is_staff: formData.is_staff === "on",
-        is_superuser: formData.is_superuser === "on",
+    await updateUser(copiedUser.id, {
+      ...copiedUser,
+      ...formData,
+      is_staff: formData.is_staff === "on",
+      is_superuser: formData.is_superuser === "on",
+    })
+      .then(() => {
+        setUsers((users) =>
+          users.map((u) => (u.id === copiedUser.id ? copiedUser : u))
+        )
+        toast.success("Account updated successfully.")
       })
-      setUsers((users) =>
-        users.map((u) => (u.id === copiedUser.id ? copiedUser : u))
-      )
-      toast.success("Account updated successfully.")
-    } catch (error) {
-      console.error(error)
-      toast.error("Something went wrong. Please try again.")
-    }
+      .catch(() => toast.error("Failed to update account."))
   }
 
   return (

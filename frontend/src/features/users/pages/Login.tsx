@@ -5,8 +5,10 @@ import { User } from "../models"
 
 export function Login({
   onLogin,
+  setToken,
 }: {
   onLogin: React.Dispatch<React.SetStateAction<User | null>>
+  setToken: React.Dispatch<React.SetStateAction<string | null>>
 }) {
   const navigate: NavigateFunction = useNavigate()
 
@@ -21,6 +23,7 @@ export function Login({
     try {
       const response = await getToken(formData.username, formData.password)
       if (response.token) {
+        setToken(response.token)
         localStorage.setItem("token", response.token)
         const user = await getLogedUser()
         if (user) {

@@ -10,13 +10,9 @@ export function Sessions() {
   const [sessions, setSessions] = useState<SessionsProps[]>([])
 
   useEffect(() => {
-    try {
-      getSessions("/api/games")
-        .then((data) => setSessions(data))
-        .catch(() => setSessions([]))
-    } catch (error) {
-      toast.error("Failed to fetch sessions")
-    }
+    getSessions("/api/games")
+      .then((data) => setSessions(data))
+      .catch(() => toast.error("Failed to fetch sessions"))
   }, [])
 
   return (

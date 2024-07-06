@@ -21,12 +21,12 @@ export function CreateSession() {
     if (image) {
       formData.append("image", image)
     }
-    try {
-      await createSession(formData)
-      navigate("/admin/sessions")
-    } catch (error) {
-      toast.error("Something went wrong. Please try again.")
-    }
+    await createSession(formData)
+      .then(() => {
+        toast.success("Session created!")
+        navigate("/admin/sessions")
+      })
+      .catch(() => toast.error("Something went wrong. Please try again."))
   }
 
   return (

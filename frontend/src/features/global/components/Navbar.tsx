@@ -1,13 +1,23 @@
 import { NavLink } from "react-router-dom"
 import { User } from "../../users/models"
+import { useEffect } from "react"
 
 export function Navbar({
   user,
   logout,
+  toggleTheme,
+  theme,
 }: {
   user: User | null
   logout: () => void
+  toggleTheme: () => void
+  theme: string
 }) {
+  useEffect(() => {
+    localStorage.setItem("theme", theme)
+    document.documentElement.setAttribute("data-theme", theme)
+  })
+
   return (
     <div className="navbar bg-base-300 rounded-box">
       <div className="navbar-start">
@@ -88,7 +98,12 @@ export function Navbar({
         </div>
 
         <label className="swap swap-rotate btn btn-ghost btn-circle">
-          <input type="checkbox" className="theme-controller" value="light" />
+          <input
+            type="checkbox"
+            className="theme-controller"
+            onChange={toggleTheme}
+            value={theme}
+          />
           <i className="bi bi-moon-stars-fill swap-off fill-current text-xl"></i>
           <i className="bi bi-sun-fill swap-on fill-current text-xl"></i>
         </label>

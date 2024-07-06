@@ -20,12 +20,12 @@ export function ReservationsList() {
   }, [])
 
   const getData = async (url: string) => {
-    try {
-      setData(await getReservations(url))
-    } catch (error) {
-      console.log(error)
-      toast.error("Failed to fetch reservations")
-    }
+    await getReservations(url)
+      .then((reservations) => setData(reservations))
+      .catch((error) => {
+        console.log(error)
+        toast.error("Failed to fetch reservations")
+      })
   }
 
   const handleSelect = (
@@ -42,26 +42,22 @@ export function ReservationsList() {
   }
 
   const deleteSelectedData = async () => {
-    try {
-      for (const session of selectedData) {
-        await deleteReservation(session.id)
-        continue
-      }
-      toast.success(`Deleted ${selectedData.length} reservations`)
-      setData(data.filter((session) => !selectedData.includes(session)))
-      setSelectedData([])
-    } catch (error) {
-      toast.error("Failed to delete sessions")
+    for (const session of selectedData) {
+      await deleteReservation(session.id)
+        .then(() => {
+          setData(data.filter((s) => s.id !== session.id))
+          setSelectedData(selectedData.filter((s) => s.id !== session.id))
+          toast.success(`Deleted session ${session.id}`)
+        })
+        .catch(() => toast.error(`Failed to delete session ${session.id}`))
     }
   }
 
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value)
-    setData(
-      await getReservations(
-        baseUrl + (e.target.value ? `?search=${e.target.value}` : "")
-      )
-    )
+    await getReservations(
+      baseUrl + (e.target.value ? `?search=${e.target.value}` : "")
+    ).then((reservations) => setData(reservations))
   }
 
   const displayActionsButton = () => {

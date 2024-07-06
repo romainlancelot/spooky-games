@@ -32,13 +32,9 @@ export function ModifyForm({
     if (!formData.password) {
       delete formData.password
     }
-    try {
-      await updateLoggedUser(formData as unknown as User)
-      toast.success("Account updated successfully.")
-    } catch (error) {
-      console.error(error)
-      toast.error("Something went wrong. Please try again.")
-    }
+    await updateLoggedUser(formData as unknown as User)
+      .then(() => toast.success("Account updated successfully."))
+      .catch(() => toast.error("Failed to update account."))
   }
 
   return (
