@@ -40,3 +40,6 @@ We would like to thank our teachers and mentors for their guidance and support t
 # License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details.
+
+<h1>Thanks for reading!</h1>
+<img src="https://media1.tenor.com/m/nXqrTblGHhgAAAAC/demon-slayer-kimetsu-no-yaiba.gif" width="100%">
