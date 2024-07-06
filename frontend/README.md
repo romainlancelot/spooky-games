@@ -1,30 +1,43 @@
-# React + TypeScript + Vite
+<h1>Spooky Games frontend</h1>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend for the Spooky Games project. It is a React application that uses the backend API to display and interact with the data.
 
-Currently, two official plugins are available:
+<h1>Table of contents</h1>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [Installation](#installation)
+- [Running the frontend](#running-the-frontend)
+- [Building the frontend](#building-the-frontend)
 
-## Expanding the ESLint configuration
+# Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+To install the frontend, you will need to have Node.js installed. You can download it from [the official website](https://nodejs.org/).
 
-- Configure the top-level `parserOptions` property like this:
+Once you have Node.js installed, you can install the frontend by running the following commands:
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```bash
+cd frontend
+npm install
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+# Running the frontend
+
+To run the frontend, you can use the following command:
+
+```bash
+npm run dev
+```
+
+This will start the frontend on [http://localhost:5173](http://localhost:5173).
+
+# Building the frontend
+
+To build the frontend, you can use the following command:
+
+```bash
+npm run build
+```
+
+This will create a `dist` directory with the built frontend.
+
+<h1>Thanks for reading!</h1>
+<img src="https://media1.tenor.com/m/fiNFwkwKi1UAAAAC/bnha-mha.gif" width="100%">
