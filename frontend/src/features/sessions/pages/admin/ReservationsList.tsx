@@ -106,18 +106,26 @@ export function ReservationsList() {
         </th>
         <td>{session.date}</td>
         <td>{session.reservation_time}</td>
-        <td className="flex items-center gap-2">
-          <img
-            src={session.game.image}
-            alt={session.game.name}
-            className="w-10 h-10 rounded-full"
-          />
-          {session.game.name}
-        </td>
+        {session.game !== null ? (
+          <>
+            <td className="flex items-center gap-2">
+              <img
+                src={session.game.image}
+                alt={session.game.name}
+                className="w-10 h-10 rounded-full"
+              />
+              {session.game.name}
+            </td>
+          </>
+        ) : (
+          <>
+            <td>This game not exists anymore</td>
+          </>
+        )}
         <td>{session.owner.username}</td>
         <td>
-          {session.participants.length} player
-          {session.participants.length > 1 ? "s" : ""}
+          {session.participants.length + 1} player
+          {session.participants.length + 1 > 1 ? "s" : ""}
         </td>
         <td>{session.price}€</td>
       </tr>
